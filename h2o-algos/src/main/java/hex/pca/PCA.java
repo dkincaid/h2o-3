@@ -281,9 +281,11 @@ public class PCA extends ModelBuilder<PCAModel,PCAModel.PCAParameters,PCAModel.P
           }
 
           // Cannot calculate SVD if all rows contain missing value(s) and hence were skipped
-          if(model._output._nobs == 0) {
-            error("_train", "Every row in _train contains at least one missing value. " +
-                    "Consider setting impute_missing = TRUE or using pca_method = 'GLRM' instead.");
+          // and if the user specify k to be higher than min(number of columns, number of rows)
+          if((model._output._nobs == 0) || (model._output._nobs < _parms._k )) {
+            error("_train", "Number of row in _train is less than k. " +
+                    "Consider setting impute_missing = TRUE or using pca_method = 'GLRM' instead or reducing the " +
+                    "value of parameter k.");
           }
           if (error_count() > 0) {
             throw new IllegalArgumentException("Found validation errors: " + validationErrors());
